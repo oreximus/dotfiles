@@ -1,1 +1,1 @@
-startx
+test -z ${TMUX} && startx

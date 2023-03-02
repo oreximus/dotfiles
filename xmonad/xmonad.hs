@@ -180,16 +180,6 @@ runSelectedAction' conf actions = do
         Just selectedAction -> selectedAction
         Nothing -> return ()
 
--- gsCategories =
---   [ ("Games",      spawnSelected' gsGames)
---   --, ("Education",   spawnSelected' gsEducation)
---   , ("Internet",   spawnSelected' gsInternet)
---   , ("Multimedia", spawnSelected' gsMultimedia)
---   , ("Office",     spawnSelected' gsOffice)
---   , ("Settings",   spawnSelected' gsSettings)
---   , ("System",     spawnSelected' gsSystem)
---   , ("Utilities",  spawnSelected' gsUtilities)
---   ]
 
 gsCategories =
   [ ("Internet",   "xdotool key super+g 1")
@@ -229,21 +219,19 @@ gsOffice =
 gsSettings =
   [ ("Customize Look and Feel", "lxappearance")
   , ("Firewall Configuration", "sudo gufw")
+  , ("Vim", (myTerminal ++ " -e vim"))
   ]
 
 gsSystem =
   [ ("Alacritty", "alacritty")
   , ("Bash", (myTerminal ++ " -e bash"))
-  , ("Htop", (myTerminal ++ " -e htop"))
+  , ("VMware", "progl vmware")
   , ("Nemo", "nemo")
+  , ("Htop", (myTerminal ++ " -e htop"))
   , ("VirtualBox", "virtualbox")
   , ("Zsh", (myTerminal ++ " -e zsh"))
   ]
 
-gsUtilities =
-  [ ("Nitrogen", "nitrogen")
-  , ("Vim", (myTerminal ++ " -e vim"))
-  ]
 
 myScratchPads :: [NamedScratchpad]
 myScratchPads = [ NS "terminal" spawnTerm findTerm manageTerm
@@ -427,6 +415,7 @@ myManageHook = composeAll
   , className =? "Gimp"             --> doShift ( myWorkspaces !! 3 )
   , className =? "discord"             --> doShift ( myWorkspaces !! 4 )
   , className =? "VirtualBox Manager" --> doShift  ( myWorkspaces !! 5 )
+  , className =? "Vmware" --> doShift  ( myWorkspaces !! 5 )
   , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat  -- Float Firefox Dialog
   , isFullscreen -->  doFullFloat
   ] <+> namedScratchpadManageHook myScratchPads
@@ -584,7 +573,7 @@ myKeys c =
   ^++^ subKeys "GridSelect"
   -- , ("C-g g", addName "Select favorite apps"     $ runSelectedAction' defaultGSConfig gsCategories)
   [ ("M-M1-<Return>", addName "Select favorite apps" $ spawnSelected'
-       $ gsInternet ++ gsMultimedia ++ gsOffice ++ gsSettings ++ gsSystem ++ gsUtilities)
+       $ gsInternet ++ gsMultimedia ++ gsOffice ++ gsSettings ++ gsSystem)
   , ("M-g c", addName "Select favorite apps"    $ spawnSelected' gsCategories)
   , ("M-g t", addName "Goto selected window"    $ goToSelected $ mygridConfig myColorizer)
   , ("M-g b", addName "Bring selected window"   $ bringSelected $ mygridConfig myColorizer)
@@ -592,9 +581,7 @@ myKeys c =
   , ("M-g 2", addName "Menu of multimedia apps" $ spawnSelected' gsMultimedia)
   , ("M-g 3", addName "Menu of office apps"     $ spawnSelected' gsOffice)
   , ("M-g 4", addName "Menu of settings apps"   $ spawnSelected' gsSettings)
-  , ("M-g 5", addName "Menu of system apps"     $ spawnSelected' gsSystem)
-  , ("M-g 6", addName "Menu of utilities apps"  $ spawnSelected' gsUtilities)]
-
+  , ("M-g 5", addName "Menu of system apps"     $ spawnSelected' gsSystem)]
   -- Multimedia Keys
   ^++^ subKeys "Multimedia keys"
   [ ("<XF86AudioPlay>", addName "mocp play"           $ spawn "mocp --play")

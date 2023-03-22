@@ -187,12 +187,14 @@ gsCategories =
   , ("Office",     "xdotool key super+g 3")
   , ("Settings",   "xdotool key super+g 4")
   , ("System",     "xdotool key super+g 5")
-  , ("Utilities",  "xdotool key super+g 6")
+  , ("WebAppTesting",  "xdotool key super+g 6")
+  , ("Utilities",  "xdotool key super+g 7")
   ]
 
 gsInternet =
   [ ("Brave", "brave")
   , ("Discord", "discord")
+  , ("TorBrowser", "torbrowser-launcher")
   , ("Firefox", "firefox")
   , ("Transmission", "transmission-gtk")
   ]
@@ -216,6 +218,11 @@ gsOffice =
   , ("LO Writer", "lowriter")
   ]
 
+gsWebAppTesting = 
+  [ ("Burpsuite", "burpsuite")
+  , ("Wireshark", "wireshark-qt")                   
+  ]
+
 gsSettings =
   [ ("Customize Look and Feel", "lxappearance")
   , ("Firewall Configuration", "sudo gufw")
@@ -225,13 +232,19 @@ gsSettings =
 gsSystem =
   [ ("Alacritty", "alacritty")
   , ("Bash", (myTerminal ++ " -e bash"))
-  , ("VMware", "progl vmware")
+  , ("Virt-Manager", "virt-manager")
   , ("Nemo", "nemo")
-  , ("Htop", (myTerminal ++ " -e htop"))
   , ("VirtualBox", "virtualbox")
+  , ("Htop", (myTerminal ++ " -e htop"))
   , ("Zsh", (myTerminal ++ " -e zsh"))
   ]
 
+gsUtilities =
+  [ ("Obsidian", "obsidian")
+  , ("Sublime", "subl")
+  , ("Gimp", "gimp")
+  , ("Davinci-Resolve", "progl resolve")
+  ]
 
 myScratchPads :: [NamedScratchpad]
 myScratchPads = [ NS "terminal" spawnTerm findTerm manageTerm
@@ -408,14 +421,24 @@ myManageHook = composeAll
   , className =? "pinentry-gtk-2"  --> doFloat
   , className =? "splash"          --> doFloat
   , className =? "toolbar"         --> doFloat
+  , className =? "Electron"         --> doFloat
+  , className =? "resolve"         --> doFloat
   , className =? "Yad"             --> doCenterFloat
-  , title =? "Oracle VM VirtualBox Manager"   --> doFloat
+  , title =? "VirtualBox - Preferences"   --> doFloat
+  , title =? "VirtualBoxVM"   --> doFloat
+  , className =? "VirtualBoxVM"   --> doFloat
   , title =? "Order Chain - Market Snapshots" --> doFloat
   , className =? "mpv"             --> doShift ( myWorkspaces !! 7 )
+  , className =? "VirtualBox Machine"             --> doShift ( myWorkspaces !! 6 )
+  , className =? "Nemo"             --> doShift ( myWorkspaces !! 4 )
+  , className =? "Brave-browser"             --> doShift ( myWorkspaces !! 2 )
+  , className =? "Virt-manager"             --> doShift ( myWorkspaces !! 5 )
+  , className =? "obsidian"             --> doShift ( myWorkspaces !! 2 )
+  , className =? "firefox"             --> doShift ( myWorkspaces !! 1 )
   , className =? "Gimp"             --> doShift ( myWorkspaces !! 3 )
+  , className =? "resolve"             --> doShift ( myWorkspaces !! 3 )
   , className =? "discord"             --> doShift ( myWorkspaces !! 4 )
   , className =? "VirtualBox Manager" --> doShift  ( myWorkspaces !! 5 )
-  , className =? "Vmware" --> doShift  ( myWorkspaces !! 5 )
   , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat  -- Float Firefox Dialog
   , isFullscreen -->  doFullFloat
   ] <+> namedScratchpadManageHook myScratchPads
@@ -440,14 +463,21 @@ myKeys c =
   let subKeys str ks = subtitle' str : mkNamedKeymap c ks in
   subKeys "Xmonad Essentials"
   [ ("M-S-c", addName "Restart XMonad"         $ spawn "xmonad --restart")
-  , ("M-S-q", addName "Quit XMonad"            $ io exitSuccess)
-  --, ("M-S-q", addName "Quit XMonad"            $ spawn "dm-logout")
+  --, ("M-S-q", addName "Quit XMonad"            $ io exitSuccess)
+  , ("M-S-q", addName "Quit XMonad"            $ spawn "dm-logout")
   , ("M-q", addName "Kill focused window"    $ kill1)
   , ("M-S-a", addName "Kill all windows on WS" $ killAll)
   , ("M-S-p", addName "Run prompt"             $ spawn "dmenu_run")
+  , ("M-x", addName "Flameshot"             $ spawn "flameshot_exec")
   , ("M-S-b", addName "Toggle bar show/hide"   $ sendMessage ToggleStruts)
-  , ("M-S-b", addName "Active Windows Fullscreen"  $ spawn "xdotool getactivewindow windowstate --toggle FULLSCREEN")
   , ("M-/", addName "DTOS Help"                $ spawn "~/.local/bin/dtos-help")]
+
+  ^++^ subKeys "Browser Keys"
+  --Browser Keys
+  [ ("M-w 1", addName "Firefox Profile 1" $ spawn "firefox -P default-release")
+  , ("M-w 2", addName "Firefox Profile 2" $ spawn "firefox -P default")
+  , ("M-w 3", addName "Firefox Profile 3" $ spawn "firefox -P Pentesting")
+  , ("M-S-w", addName "Brave Browser" $ spawn "brave")]
 
   ^++^ subKeys "Switch to workspace"
   [ ("M-1", addName "Switch to workspace 1"    $ (windows $ W.greedyView $ myWorkspaces !! 0))
@@ -502,7 +532,6 @@ myKeys c =
 
   ^++^ subKeys "Favorite programs"
   [ ("M-<Return>", addName "Launch terminal"   $ spawn (myTerminal))
-  , ("M-w", addName "Launch web browser"       $ spawn "firefox")
   , ("M-M1-h", addName "Launch htop"           $ spawn (myTerminal ++ " -e htop"))]
 
   ^++^ subKeys "Monitors"
@@ -573,7 +602,7 @@ myKeys c =
   ^++^ subKeys "GridSelect"
   -- , ("C-g g", addName "Select favorite apps"     $ runSelectedAction' defaultGSConfig gsCategories)
   [ ("M-M1-<Return>", addName "Select favorite apps" $ spawnSelected'
-       $ gsInternet ++ gsMultimedia ++ gsOffice ++ gsSettings ++ gsSystem)
+       $ gsInternet ++ gsMultimedia ++ gsOffice ++ gsSettings ++ gsUtilities ++ gsSystem ++ gsWebAppTesting)
   , ("M-g c", addName "Select favorite apps"    $ spawnSelected' gsCategories)
   , ("M-g t", addName "Goto selected window"    $ goToSelected $ mygridConfig myColorizer)
   , ("M-g b", addName "Bring selected window"   $ bringSelected $ mygridConfig myColorizer)
@@ -581,7 +610,9 @@ myKeys c =
   , ("M-g 2", addName "Menu of multimedia apps" $ spawnSelected' gsMultimedia)
   , ("M-g 3", addName "Menu of office apps"     $ spawnSelected' gsOffice)
   , ("M-g 4", addName "Menu of settings apps"   $ spawnSelected' gsSettings)
-  , ("M-g 5", addName "Menu of system apps"     $ spawnSelected' gsSystem)]
+  , ("M-g 5", addName "Menu of system apps"     $ spawnSelected' gsSystem)
+  , ("M-g 6", addName "Menu of WebApp Testing apps"     $ spawnSelected' gsWebAppTesting)
+  , ("M-g 7", addName "Menu of Utilies apps"     $ spawnSelected' gsUtilities)]
   -- Multimedia Keys
   ^++^ subKeys "Multimedia keys"
   [ ("<XF86AudioPlay>", addName "mocp play"           $ spawn "mocp --play")

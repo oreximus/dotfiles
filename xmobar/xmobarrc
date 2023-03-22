@@ -4,19 +4,20 @@ Config {
      font =         "xft:JetBrains Mono:size=11:bold:antialias=true,Noto Color Emoji:size=11"
    , additionalFonts = [ "xft:Mononoki Nerd Font Mono:size=11:bold:antialias=true"
 		       , "xft:Font Awesome 6 Free Solid:pixelsize=12"
+		       , "xft:Font Awesome 6 Free Solid:pixelsize=14"
 		       , "xft:Font Awesome 6 Brands:pixelsize=12"
 		       ]
-   , bgColor =      "#282c34"
-   , fgColor =      "#ff6c6b"
+   , bgColor =      "#313244"
+   , fgColor =      "#e78284"
    , position =     Top
    , border =       BottomB
    , borderColor =  "#646464"
-   , iconRoot     = "/home/casan/.xmonad/xpm/"  -- default: "."
+   , iconRoot     = ".xmonad/xpm/"  -- default: "."
 
    -- layout
    , sepChar =  "%"   -- delineator between plugin names and straight text
    , alignSep = "}{"  -- separator between left-right alignment
-   , template = "%UnsafeStdinReader% }{ <box type=Bottom width=2 mb=2 color=#f5c2e7><fc=#40a02b>%dynnetwork%</fc></box>  <box type=Bottom width=2 mb=2 color=#cba6f7><fc=#fe640b>%cpu%</fc></box>  <box type=Bottom width=2 mb=2 color=#f38ba8><fc=#04a5e5>%memory%</fc></box>  <box type=Bottom width=2 mb=2 color=#fab387><fc=#ea76cb>%default:Master%</fc></box>  <box type=Bottom width=2 mb=2 color=#a6e3a1><fc=#dc8a78>%date%</fc></box>%trayerpad%"
+   , template = "<fc=#ffffff>%yinyang%</fc> %UnsafeStdinReader% }{ <box type=Bottom width=2 mb=2 color=#a6e3a1><fc=#40a02b>%dynnetwork%</fc></box>  <box type=Bottom width=2 mb=2 color=#fab387><fc=#fe640b>%cpu%</fc></box>  <box type=Bottom width=2 mb=2 color=#74c7ec><fc=#04a5e5>%memory%</fc></box>  <box type=Bottom width=2 mb=2 color=#cba6f7><fc=#ea76cb>%default:Master%</fc></box>  <box type=Bottom width=2 mb=2 color=#fab387><fc=#dc8a78>%date%</fc></box>%trayerpad%"
    -- general behavior
    , lowerOnStart =     True    -- send to bottom of window stack on start
    , hideOnStart =      False   -- start with window unmapped (hidden)
@@ -82,6 +83,8 @@ Config {
         --   (%F = y-m-d date, %a = day of week, %T = h:m time)
         , Run Date "<fn=2>\xf017</fn> %b %d %Y - (%H:%M) " "date" 50
 
+        -- For Icon
+        , Run Com "echo" ["<fn=3>\xf6ad</fn>"] "yinyang" 3600
         -- Trayer
         , Run Com ".config/xmobar/trayer-padding-icon.sh" [] "trayerpad" 20
 	      -- For clicking Workspaces

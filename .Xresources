@@ -40,7 +40,7 @@ URxvt*imLocale: en_US.UTF-8
 URxvt*termName: rxvt-unicode-256color
 URxvt*buffered: false
 URxvt.intensityStyles: false
-URxvt.font: xft:JetBrainsMono Nerd Font:size=11, xft:Monospace:style=Medium:size=12   
+URxvt.font: xft:JetBrainsMono Nerd Font:size=12, xft:Monospace:style=Medium:size=12, xft:Noto Color Emoji:style=Regular
 URxvt.saveLines: 100000
 URxvt.scrollBar: false
 

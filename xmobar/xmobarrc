@@ -1,23 +1,23 @@
 Config { 
 
    -- appearance
-     font =         "xft:JetBrains Mono:size=11:bold:antialias=true,Noto Color Emoji:size=11"
+     font =         "xft:JetBrainsMono Nerd Font:size=11:SemiBold:antialias=true,Noto Color Emoji:size=11"
    , additionalFonts = [ "xft:Mononoki Nerd Font Mono:size=11:bold:antialias=true"
 		       , "xft:Font Awesome 6 Free Solid:pixelsize=12"
 		       , "xft:Font Awesome 6 Free Solid:pixelsize=14"
 		       , "xft:Font Awesome 6 Brands:pixelsize=12"
 		       ]
-   , bgColor =      "#313244"
-   , fgColor =      "#e78284"
+   , bgColor =      "#1e1e2e"
+   , fgColor =      "#cba6f7"
    , position =     Top
    , border =       BottomB
-   , borderColor =  "#646464"
+   , borderColor =  "#313244"
    , iconRoot     = ".xmonad/xpm/"  -- default: "."
 
    -- layout
    , sepChar =  "%"   -- delineator between plugin names and straight text
    , alignSep = "}{"  -- separator between left-right alignment
-   , template = "<fc=#ffffff>%yinyang%</fc> %UnsafeStdinReader% }{ <box type=Bottom width=2 mb=2 color=#a6e3a1><fc=#40a02b>%dynnetwork%</fc></box>  <box type=Bottom width=2 mb=2 color=#fab387><fc=#fe640b>%cpu%</fc></box>  <box type=Bottom width=2 mb=2 color=#74c7ec><fc=#04a5e5>%memory%</fc></box>  <box type=Bottom width=2 mb=2 color=#cba6f7><fc=#ea76cb>%default:Master%</fc></box>  <box type=Bottom width=2 mb=2 color=#fab387><fc=#dc8a78>%date%</fc></box>%trayerpad%"
+   , template = "<fc=#ffffff>%yinyang%</fc> %UnsafeStdinReader% }{ <fc=#646464>|</fc> <fc=#94e2d5>%dynnetwork%</fc> <fc=#646464>|</fc> <fc=#f2cdcd>%cpu%</fc> <fc=#646464>|</fc> <fc=#b4befe>%mem-icon% %memory%%giga%</fc> <fc=#646464>|</fc> <fc=#eba0ac>%default:Master%</fc> <fc=#646464>|</fc> <fc=#89b4fa>%date%</fc><fc=#646464>|</fc>%trayerpad%"
    -- general behavior
    , lowerOnStart =     True    -- send to bottom of window stack on start
    , hideOnStart =      False   -- start with window unmapped (hidden)
@@ -44,22 +44,24 @@ Config {
 
 
         -- network activity monitor (dynamic interface resolution)
-        [ Run DynNetwork     [ "--template" , "<fn=2>\xf796</fn> <dev>: <tx>kB/s|<rx>kB/s"
+        [ Run DynNetwork     [ "--template" , "<fn=3>\xf0aa</fn> <tx> <fn=3>\xf0ab</fn> <rx>"
                              , "--Low"      , "1000"       -- units: B/s
                              , "--High"     , "5000"       -- units: B/s
-                             , "--normal"   , "orange"
+                             , "--normal"   , "#89dceb"
                              , "--high"     , "#a6e3a1"
+                             , "-S"     , "True"
                              ] 10
 
         -- cpu activity monitor
-        , Run Cpu       ["-t", "<fn=2>\xf108</fn> cpu: (<total>%)","-H","50","--high","red"] 20
+        , Run Cpu       ["-t", "<fn=2>\xf2db</fn> <total>%","-H","50","--high","red"] 20
 
         -- memory usage monitor
-        , Run Memory         [ "-t", "<fn=2>\xf233</fn> mem: <used>M (<usedratio>%)"] 20
-
+        , Run Com "/home/casan/.local/bin/mem-conversion.py" [] "memory" 10
+        , Run Com  "echo" ["<fn=2>\xf538</fn>"] "mem-icon" 3600
+        , Run Com  "echo" ["GB"] "giga" 3600
         -- Volume Command
         ,Run Volume "default" "Master" 
-                             ["-t", "Vol: <volume>% <status>"
+                             ["-t", "<volume>% <status>"
                              , "--", "-O", "<fn=2>\xf028</fn>", "-o", "<fn=2>\xf6a9</fn>", "-C", "#a6adc8"
                              ] 10
         -- battery monitor
@@ -81,12 +83,12 @@ Config {
 
         -- time and date indicator 
         --   (%F = y-m-d date, %a = day of week, %T = h:m time)
-        , Run Date "<fn=2>\xf017</fn> %b %d %Y - (%H:%M) " "date" 50
+        , Run Date "<fn=2>\xf017</fn> %a %b %d (%H:%M) " "date" 50
 
         -- For Icon
-        , Run Com "echo" ["<fn=3>\xf6ad</fn>"] "yinyang" 3600
+        , Run Com "echo" ["<fn=3>\xf5fd</fn>"] "yinyang" 3600
         -- Trayer
-        , Run Com ".config/xmobar/trayer-padding-icon.sh" [] "trayerpad" 20
+        , Run Com ".config/xmobar/trayer-padding-icon.sh" [] "trayerpad" 10
 	      -- For clicking Workspaces
 	      , Run UnsafeStdinReader
 

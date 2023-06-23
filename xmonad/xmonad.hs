@@ -4,6 +4,7 @@ import System.Directory
 import System.IO (hClose, hPutStr, hPutStrLn)
 import System.Exit (exitSuccess)
 import qualified XMonad.StackSet as W
+import XMonad.ManageHook
 
     -- Actions
 import XMonad.Actions.CopyWindow (kill1)
@@ -58,6 +59,7 @@ import XMonad.Layout.Spacing
 import XMonad.Layout.SubLayouts
 import XMonad.Layout.WindowArranger (windowArrange, WindowArrangerMsg(..))
 import XMonad.Layout.WindowNavigation
+import XMonad.Layout.PerWorkspace
 import qualified XMonad.Layout.ToggleLayouts as T (toggleLayouts, ToggleLayout(Toggle))
 import qualified XMonad.Layout.MultiToggle as MT (Toggle(..))
 
@@ -85,7 +87,7 @@ import XMonad.Util.SpawnOnce
 import Colors.DoomOne
 
 myFont :: String
-myFont = "xft:DejaVuSansMono Nerd Font Mono:regular:size=9:antialias=true:hinting=true"
+myFont = "xft:DejaVuSansMono Nerd Font Mono:regular:size=9:antialias=true:hinting=true, Noto Color Emoji:size=11"
 
 myModMask :: KeyMask
 myModMask = mod4Mask        -- Sets modkey to super/windows key
@@ -97,10 +99,10 @@ myBorderWidth :: Dimension
 myBorderWidth = 2           -- Sets border width for windows
 
 myNormColor :: String       -- Border color of normal windows
-myNormColor   = "#dce0e8" 	
+myNormColor   = "#11111b" 	
 
 myFocusColor :: String      -- Border color of focused windows
-myFocusColor  = "#8839ef"
+myFocusColor  = "#b4befe"
 
 windowCount :: X (Maybe String)
 windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace . W.current . windowset
@@ -111,12 +113,14 @@ myStartupHook = do
 
   spawnOnce "picom --experimental-backends"
   spawnOnce "/usr/bin/lxpolkit &"
+  spawnOnce "/usr/bin/dunst &"
 
-  spawn ("sleep 1 && trayer --edge top --align right --widthtype request --padding 6 --SetDockType true --SetPartialStrut true --expand true --monitor 1 --transparent true --alpha 0 " ++ colorTrayer ++ " --height 22")
+  spawn ("sleep 1 && trayer --edge top --align right --widthtype request --SetDockType true --SetPartialStrut true --expand true --monitor 1 --transparent true --alpha 0 " ++ colorTrayer ++ " --height 22")
 
   -- spawnOnce "xargs xwallpaper --stretch < ~/.cache/wall"
   -- spawnOnce "~/.fehbg &"  -- set last saved feh wallpaper
-  spawnOnce "feh --randomize --bg-fill /home/casan/Pictures/anime/*"  -- feh set random wallpaper
+  spawnOnce "feh --bg-fill /home/casan/Pictures/anime/anime03.jpg"  -- feh set random wallpaper
+  -- spawnOnce "livewall ~/Videos/live_wallpapers/"
   -- spawnOnce "nitrogen --restore &"   -- if you prefer nitrogen to feh
   setWMName "LG3D"
 
@@ -196,13 +200,13 @@ gsInternet =
   , ("Discord", "discord")
   , ("TorBrowser", "torbrowser-launcher")
   , ("Firefox", "firefox")
-  , ("Transmission", "transmission-gtk")
+  , ("Transmission", "transmission-qt")
   ]
 
 gsMultimedia =
   [ ("Audacity", "audacity")
   , ("Blender", "blender")
-  , ("Deadbeef", "deadbeef")
+  , ("Spotify", "spotify-launcher")
   , ("OBS Studio", "obs")
   , ("VLC", "vlc")
   ]
@@ -230,11 +234,10 @@ gsSettings =
   ]
 
 gsSystem =
-  [ ("Alacritty", "alacritty")
+  [ ("virt-manager", "DRI_PRIME=1 virt-manager")
   , ("Bash", (myTerminal ++ " -e bash"))
-  , ("Virt-Manager", "virt-manager")
   , ("Nemo", "nemo")
-  , ("VirtualBox", "virtualbox")
+  , ("Alacritty", "alacritty")
   , ("Htop", (myTerminal ++ " -e htop"))
   , ("Zsh", (myTerminal ++ " -e zsh"))
   ]
@@ -252,7 +255,7 @@ myScratchPads = [ NS "terminal" spawnTerm findTerm manageTerm
                 , NS "calculator" spawnCalc findCalc manageCalc
                 ]
   where
-    spawnTerm  = myTerminal ++ " -t scratchpad"
+    spawnTerm  = myTerminal ++ " -t scratchpad -e tmux new -s scratchpad"
     findTerm   = title =? "scratchpad"
     manageTerm = customFloating $ W.RationalRect l t w h
                where
@@ -276,6 +279,9 @@ myScratchPads = [ NS "terminal" spawnTerm findTerm manageTerm
                  w = 0.4
                  t = 0.75 -h
                  l = 0.70 -w
+
+
+
 
 --Makes setting the spacingRaw simpler to write. The spacingRaw module adds a configurable amount of space around windows.
 mySpacing :: Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spacing l a
@@ -343,6 +349,8 @@ threeRow = renamed [Replace "threeRow"]
 tabs     = renamed [Replace "tabs"]
            -- I cannot add spacing to this layout because it will
            -- add spacing between window and tabs which looks bad.
+           $ noBorders
+           $ smartBorders
            $ tabbed shrinkText myTabTheme
 tallAccordion  = renamed [Replace "tallAccordion"]
            $ Accordion
@@ -351,11 +359,11 @@ wideAccordion  = renamed [Replace "wideAccordion"]
 
 -- setting colors for tabs layout and tabs sublayout.
 myTabTheme = def { fontName            = myFont
-                 , activeColor         = color15
-                 , inactiveColor       = color08
-                 , activeBorderColor   = color15
-                 , inactiveBorderColor = colorBack
-                 , activeTextColor     = colorBack
+                 , activeColor         = "#b4befe"
+                 , inactiveColor       = "#1e1e2e"
+                 , activeBorderColor   = "#313244"
+                 , inactiveBorderColor = "#313244"
+                 , activeTextColor     = "#1e1e2e"
                  , inactiveTextColor   = color16
                  }
 
@@ -369,7 +377,7 @@ myShowWNameTheme = def
   }
 
 -- The layout hook
-myLayoutHook = avoidStruts
+myLayoutHook = avoidStruts $ onWorkspace "2" tabs $ onWorkspace "6" monocle
                $ mouseResize
                $ windowArrange
                $ T.toggleLayouts floats
@@ -399,6 +407,7 @@ myWorkspaces = map show [1 .. 9 :: Int]
 --         " 8 : <fn=2>\xf21b</fn> " :
 --         " 9 : <fn=2>\xf21e</fn> " :
 --         []
+
 myWorkspaceIndices = M.fromList $ zipWith (,) myWorkspaces [1..] -- (,) == \x y -> (x,y)
 
 clickable ws = "<action=xdotool key super+"++show i++">"++ws++"</action>"
@@ -422,26 +431,25 @@ myManageHook = composeAll
   , className =? "splash"          --> doFloat
   , className =? "toolbar"         --> doFloat
   , className =? "Electron"         --> doFloat
+  , className =? "Electron"         --> doFloat
   , className =? "resolve"         --> doFloat
   , className =? "Yad"             --> doCenterFloat
-  , title =? "VirtualBox - Preferences"   --> doFloat
-  , title =? "VirtualBoxVM"   --> doFloat
-  , className =? "VirtualBoxVM"   --> doFloat
   , title =? "Order Chain - Market Snapshots" --> doFloat
-  , className =? "mpv"             --> doShift ( myWorkspaces !! 7 )
-  , className =? "VirtualBox Machine"             --> doShift ( myWorkspaces !! 6 )
-  , className =? "Nemo"             --> doShift ( myWorkspaces !! 4 )
-  , className =? "Brave-browser"             --> doShift ( myWorkspaces !! 2 )
-  , className =? "Virt-manager"             --> doShift ( myWorkspaces !! 5 )
-  , className =? "obsidian"             --> doShift ( myWorkspaces !! 2 )
-  , className =? "firefox"             --> doShift ( myWorkspaces !! 1 )
-  , className =? "Gimp"             --> doShift ( myWorkspaces !! 3 )
-  , className =? "resolve"             --> doShift ( myWorkspaces !! 3 )
-  , className =? "discord"             --> doShift ( myWorkspaces !! 4 )
-  , className =? "VirtualBox Manager" --> doShift  ( myWorkspaces !! 5 )
+  , className=? "VirtualBox Machine" --> doShiftAndGo (myWorkspaces !! 6)
+  , className=? "Virt-manager" --> doShiftAndGo (myWorkspaces !! 5)
+  , className=? "transmission" --> doShiftAndGo (myWorkspaces !! 2)
+  , className =? "mpv"             --> doShiftAndGo ( myWorkspaces !! 7 )
+  , className =? "Brave-browser"             --> doShift ( myWorkspaces !! 1 )
+  , className =? "Spotify"             --> doShiftAndGo ( myWorkspaces !! 8 )
+  , className =? "VirtualBox"             --> doShiftAndGo ( myWorkspaces !! 5 )
+  , className =? "Gimp"             --> doShiftAndGo ( myWorkspaces !! 3 )
+  , className =? "resolve"             --> doShiftAndGo ( myWorkspaces !! 3 )
+  , className =? "discord"             --> doShiftAndGo ( myWorkspaces !! 4 )
   , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat  -- Float Firefox Dialog
   , isFullscreen -->  doFullFloat
-  ] <+> namedScratchpadManageHook myScratchPads
+  ]
+  where
+  doShiftAndGo ws = doF (W.greedyView ws) <+> doShift ws
 
 subtitle' ::  String -> ((KeyMask, KeySym), NamedAction)
 subtitle' x = ((0,0), NamedAction $ map toUpper
@@ -451,7 +459,7 @@ subtitle' x = ((0,0), NamedAction $ map toUpper
 
 showKeybindings :: [((KeyMask, KeySym), NamedAction)] -> NamedAction
 showKeybindings x = addName "Show Keybindings" $ io $ do
-  h <- spawnPipe $ "yad --text-info --fontname=\"SauceCodePro Nerd Font Mono 12\" --fore=#46d9ff back=#282c36 --center --geometry=1200x800 --title \"XMonad keybindings\""
+  h <- spawnPipe $ "yad --text-info --fontname=\"Source Code Pro 12\" --fore=#46d9ff back=#282c36 --center --geometry=1200x800 --title \"XMonad keybindings\""
   --hPutStr h (unlines $ showKm x) -- showKM adds ">>" before subtitles
   hPutStr h (unlines $ showKmSimple x) -- showKmSimple doesn't add ">>" to subtitles
   hClose h
@@ -464,7 +472,7 @@ myKeys c =
   subKeys "Xmonad Essentials"
   [ ("M-S-c", addName "Restart XMonad"         $ spawn "xmonad --restart")
   --, ("M-S-q", addName "Quit XMonad"            $ io exitSuccess)
-  , ("M-S-q", addName "Quit XMonad"            $ spawn "dm-logout")
+  , ("M-S-q", addName "Quit XMonad"            $ spawn "lxde-logout")
   , ("M-q", addName "Kill focused window"    $ kill1)
   , ("M-S-a", addName "Kill all windows on WS" $ killAll)
   , ("M-S-p", addName "Run prompt"             $ spawn "dmenu_run")
@@ -521,7 +529,7 @@ myKeys c =
   -- launch dmenu_run, so I've decided to use M-p plus KEY for these dmenu scripts.
   ^++^ subKeys "Dmenu scripts"
   [ ("M-p l", addName "List all dmscripts"     $ spawn "dm-hub")
-  , ("M-p b", addName "Set background"         $ spawn "dm-setbg")
+  , ("M-p b", addName "Set background"         $ spawn "bg-script")
   , ("M-p k", addName "Kill processes"         $ spawn "dm-kill")
   , ("M-p m", addName "View manpages"          $ spawn "dm-man")
   , ("M-p n", addName "Store and copy notes"   $ spawn "dm-note")
@@ -541,6 +549,7 @@ myKeys c =
   -- Switch layouts
   ^++^ subKeys "Switch layouts"
   [ ("M-<Tab>", addName "Switch to next layout"   $ sendMessage NextLayout)
+  , ("M-S-r", addName "Toggle Struts" $ sendMessage ToggleStruts)
   , ("M-<Space>", addName "Toggle noborders/full" $ sendMessage (MT.Toggle NBFULL) >> sendMessage ToggleStruts)]
 
   -- Window resizing
@@ -637,7 +646,7 @@ main = do
   xmproc <- spawnPipe "xmobar ~/.config/xmobar/xmobarrc"
   -- the xmonad, ya know...what the WM is named after!
   xmonad $ addDescrKeys' ((mod4Mask, xK_F1), showKeybindings) myKeys $ ewmh $ docks $ def
-    { manageHook         = myManageHook <+> manageDocks
+    { manageHook         = myManageHook <+> namedScratchpadManageHook myScratchPads <+> manageDocks
     , handleEventHook    = windowedFullscreenFixEventHook <> swallowEventHook (className =? "Alacritty"  <||> className =? "st-256color" <||> className =? "XTerm") (return True) <> trayerPaddingXmobarEventHook
     , modMask            = myModMask
     , terminal           = myTerminal

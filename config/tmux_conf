@@ -1,0 +1,41 @@
+# Theme Configs
+set -g default-terminal "tmux-256color"
+set -ag terminal-overrides ",xterm-256color:RGB"
+
+# Enable mouse mode (tmux 2.1 and above)
+set -g mouse on
+
+# switch panes using Alt-arrow without prefix
+bind -n M-h select-pane -L
+bind -n M-l select-pane -R
+bind -n M-k select-pane -U
+bind -n M-j select-pane -D
+
+# don't rename windows automatically
+set-option -g allow-rename off
+
+# Vi mode
+set-window-option -g mode-keys vi
+
+# history buffer
+set-option -g history-limit 100000
+
+# List of plugins
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tmux-sensible'
+
+# catppuccin theme
+set -g @plugin 'catppuccin/tmux'
+# ...alongside
+set -g @plugin 'tmux-plugins/tpm'
+# catppuccin_flavour
+set -g @catppuccin_flavour 'mocha'
+
+# Other examples:
+# set -g @plugin 'github_username/plugin_name'
+# set -g @plugin 'github_username/plugin_name#branch'
+# set -g @plugin 'git@github.com:user/plugin'
+# set -g @plugin 'git@bitbucket.com:user/plugin'
+
+# Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
+run '~/.tmux/plugins/tpm/tpm'

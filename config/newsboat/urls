@@ -1,0 +1,15 @@
+"query:YouTube:tags # \"YouTube\""
+https://www.youtube.com/feeds/videos.xml?channel_id=UCngn7SVujlvskHRvRKc1cTw "Linux" "YouTube"                              #bugswriter
+
+"query:News:tags # \"News\""
+https://news.ycombinator.com/rss "Sci&Tech" "News"
+
+"query:Blogs:tags # \"Blog\""
+
+https://krebsonsecurity.com/feed/ "InfoSec" "Blog"
+https://www.wired.com/feed/category/science/latest/rss "Science" "Blog"
+https://www.wired.com/feed/category/security/latest/rss "Security(Wired)" "Blog"
+https://www.wired.com/feed/category/business/latest/rss "Business(Wired)" "Blog"
+https://www.wired.com/feed/category/ideas/latest/rss "Ideas(Wired)" "Blog"
+http://feeds.feedburner.com/venturebeat/SZYF "TechBlogs(Venturebeat)" "Blog"
+https://techcrunch.com/feed/ "TechBlogs(TechCruch.com)" "Blog"

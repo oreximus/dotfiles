@@ -1,0 +1,116 @@
+[global]
+    ### Display ###
+    monitor = 0
+    follow = mouse
+
+    ### Geometry ###
+    width = 400
+    height = 200
+    origin = top-right
+    offset = 5x5
+    scale = 0
+    notification_limit = 0
+
+    ### Progress bar ###
+    progress_bar = true
+    progress_bar_height = 10
+    progress_bar_frame_width = 1
+    progress_bar_min_width = 150
+    progress_bar_max_width = 300
+
+
+    indicate_hidden = yes
+    separator_height = 2
+    padding = 12
+    horizontal_padding = 12
+    text_icon_padding = 12
+    frame_width = 2
+    frame_color = "#89B4FA"
+    gap_size = 6
+    separator_color = frame
+    sort = yes
+    idle_threshold = 120
+
+    ### Text ###
+
+    font = JetBrainsMono Nerd Font 11
+
+    line_height = 0
+    markup = full
+    format = "<b>%s</b>\n%b"
+    alignment = left
+    vertical_alignment = center
+    show_age_threshold = 60
+    ellipsize = middle
+    ignore_newline = no
+    stack_duplicates = true
+    hide_duplicate_count = false
+    show_indicators = yes
+
+    ### Icons ###
+
+    enable_recursive_icon_lookup = true
+    icon_theme = Papirus-Dark
+    icon_position = left
+    min_icon_size = 32
+    max_icon_size = 64
+    icon_path = /usr/share/icons/Papirus/32x32/status/:/usr/share/icons/Papirus/64x64/devices/:/usr/share/icons/Papirus/64x64/places/
+
+    ### History ###
+
+    sticky_history = yes
+    history_length = 20
+
+    ### Misc/Advanced ###
+
+    dmenu = /usr/bin/dmenu -p dunst:
+
+    browser = /sbin/firefox
+
+    always_run_script = true
+
+    title = Dunst
+
+    class = Dunst
+
+    corner_radius = 4
+
+    ignore_dbusclose = false
+
+    ### Wayland ###
+
+    force_xwayland = false
+
+    ### mouse
+
+    mouse_left_click = close_current
+    mouse_middle_click = close_all
+    mouse_right_click = do_action, close_current
+
+[experimental]
+    per_monitor_dpi = false
+
+[urgency_low]
+    background = "#1e1e1e44"
+    foreground = "#CDD6F4"
+    timeout = 10
+    #default_icon = /path/to/icon
+
+[urgency_normal]
+    background = "#1e1e1e44"
+    foreground = "#CDD6F4"
+    timeout = 10
+    #default_icon = /path/to/icon
+
+[urgency_critical]
+    background = "#1e1e1e44"
+    foreground = "#CDD6F4"
+    frame_color = "#FAB387"
+    timeout = 0
+    #default_icon = /path/to/icon
+
+# fullscreen values
+[fullscreen_delay_everything]
+    fullscreen = delay
+
+# vim: ft=cfg

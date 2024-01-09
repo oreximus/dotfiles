@@ -1,8 +1,7 @@
 [global]
     ### Display ###
     monitor = 0
-    follow = mouse
-
+    layer = overlay
     ### Geometry ###
     width = 400
     height = 200
@@ -77,9 +76,27 @@
 
     ignore_dbusclose = false
 
-    ### Wayland ###
+    ### Progress bar ###
 
-    force_xwayland = false
+    # Turn on the progess bar. It appears when a progress hint is passed with
+    # for example dunstify -h int:value:12
+    progress_bar = true
+   
+    # Progress bar highlight colour
+    highlight = "#E0727A"
+    
+    # Set the progress bar height. This includes the frame, so make sure
+    # it's at least twice as big as the frame width.
+    progress_bar_height = 10
+
+    # Set the frame width of the progress bar
+    progress_bar_frame_width = 1
+
+    # Set the minimum width for the progress bar
+    progress_bar_min_width = 150
+
+    # Set the maximum width for the progress bar
+    progress_bar_max_width = 300
 
     ### mouse
 
@@ -90,27 +107,21 @@
 [experimental]
     per_monitor_dpi = false
 
+
 [urgency_low]
-    background = "#1e1e1e44"
-    foreground = "#CDD6F4"
-    timeout = 10
-    #default_icon = /path/to/icon
+background = "#1e1e2ecc"
+foreground = "#CDD6F4"
+timeout = 2
 
 [urgency_normal]
-    background = "#1e1e1e44"
-    foreground = "#CDD6F4"
-    timeout = 10
-    #default_icon = /path/to/icon
+background = "#1e1e2ecc"
+foreground = "#CDD6F4"
+timeout = 2
 
 [urgency_critical]
-    background = "#1e1e1e44"
-    foreground = "#CDD6F4"
-    frame_color = "#FAB387"
-    timeout = 0
-    #default_icon = /path/to/icon
-
-# fullscreen values
-[fullscreen_delay_everything]
-    fullscreen = delay
+background = "#1e1e2ecc"
+foreground = "#CDD6F4"
+frame_color = "#FAB387"
+timeout = 2
 
 # vim: ft=cfg

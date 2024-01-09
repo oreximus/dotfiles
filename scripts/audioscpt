@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# Bash Script for Increasing/Decreasing/Muting/Unmuting
+# Your Audio Device base on Cases 1,2,3 respectively
+
+VOL_STATUS=$(pactl get-sink-mute @DEFAULT_SINK@ | awk '{print $2}')
+AUDIO_PER=$(amixer sget Master | awk -F"[][]" '/Left:/{print$2}' | sed 's/%//g')
+
+# Function for sending notifications
+send_notification() {
+    VOLUMEMASTER=$(amixer sget Master | awk -F'[][]' '/%/ {sum += $2} END {print sum/2}')
+        if [[ $VOL_STATUS = "no" ]]; then
+            if [[ $AUDIO_PER = 0 ]]; then
+                VOL_ICON="/usr/share/icons/Papirus-Dark/symbolic/status/audio-volume-muted-symbolic.svg"
+            elif [[ $AUDIO_PER -gt 0 && $AUDIO_PER -lt 25 ]]; then
+                VOL_ICON="/usr/share/icons/Papirus-Dark/symbolic/status/audio-volume-medium-symbolic.svg"
+            elif [[ $AUDIO_PER -gt 25 && $AUDIO_PER -lt 50 ]]; then
+                VOL_ICON="/usr/share/icons/Papirus-Dark/symbolic/status/audio-volume-medium-symbolic.svg"
+            elif [[ $AUDIO_PER -ge 50 && $AUDIO_PER -lt 75 ]]; then
+                VOL_ICON="/usr/share/icons/Papirus-Dark/symbolic/status/audio-volume-high-symbolic.svg"
+            else
+                VOL_ICON="/usr/share/icons/Papirus-Dark/symbolic/status/audio-volume-overamplified-symbolic.svg"
+            fi
+        else
+            VOL_ICON="/usr/share/icons/Papirus-Dark/symbolic/status/audio-volume-muted-symbolic.svg"
+            notify-send --icon=$VOL_ICON \
+                        -u normal \
+                        -t 2000 \
+                        -h int:value:$VOLUMEMASTER\
+                        -h string:hlcolor:#6c7086 \
+                        -r 445 --app-name=system-ui \
+                        "Volume" "    master-Volume: $VOLUMEMASTER% "
+            exit
+        fi
+
+        notify-send --icon=$VOL_ICON \
+                    -u normal \
+                    -t 2000 \
+                    -h int:value:$VOLUMEMASTER\
+                    -h string:hlcolor:#8bd5ca \
+                    -r 445 --app-name=system-ui \
+                    "Volume" "    master-Volume: $VOLUMEMASTER% "
+}
+
+## Parameters for Action on Audio Device
+
+# For Increasing Audio
+case "$1" in
+    1)
+        amixer set Master 2%+ > /dev/null
+        send_notification
+        ;;
+
+# For Decreasing Audio
+    2)
+        amixer set Master 2%- > /dev/null
+        send_notification
+        ;;
+
+# For Muting/Unmuting the Audio
+    3)
+        if [[ $VOL_STATUS = "no" ]]; then
+            VOL_ICON="/usr/share/icons/Papirus-Dark/symbolic/status/audio-volume-muted-symbolic.svg"
+            notify-send --icon=$VOL_ICON \
+                        "Audio is Muted!" &
+            P1=$!
+            amixer set Master toggle &
+                    P2=$!
+            wait $P1 $P2
+        else
+            VOL_ICON="/usr/share/icons/Papirus-Dark/symbolic/status/audio-volume-high-symbolic.svg"
+            notify-send --icon=$VOL_ICON \
+                        "Audio is Unmuted!" &
+            P1=$!
+            amixer set Master toggle &
+                    P2=$!
+            wait $P1 $P2
+        fi
+        ;;
+esac

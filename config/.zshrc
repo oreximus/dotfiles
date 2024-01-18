@@ -1,4 +1,4 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.config/zsh/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
@@ -6,11 +6,11 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/.local/bin:/usr/local/bin:$PATH:/home/casan/.local/share/gem/ruby/3.0.0/bin
 
 # Path to your oh-my-zsh installation.
-export ZSH="$HOME/.oh-my-zsh"
-export JDK_JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel'
+export ZSH="$ZDOTDIR/ohmyzsh"
+
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
@@ -79,28 +79,18 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
 	git
-	zsh-syntax-highlighting
 	zsh-autosuggestions
+	zsh-syntax-highlighting
 )
 
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
-# export MANPATH="/usr/local/man:$MANPATH"
-
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
-
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
+fcd() {
+  local dir
+  dir=$(find . -type d 2> /dev/null | fzf +m) && cd "$dir" && tmux new -s $(basename "$PWD")
+}
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
@@ -111,12 +101,39 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-alias nf="neofetch"
-alias tmux="tmux -2"
+alias wget='wget --hsts-file="$XDG_DATA_HOME/wget-hsts"'
+alias mbsync='mbsync -c "$XDG_CONFIG_HOME"/isync/mbsyncrc'
+alias tmux='tmux -f "$XDG_CONFIG_HOME/tmux/tmux.conf"'
+alias sd=fcd
+alias nb0="nb use Random"
+alias nbl="nb list --sort"
+alias nb1="nb use Notes_Org"
+alias nb2="nb use Learnings"
+alias nb3="nb use Exams\&Academics"
+alias nb4="nb use CTFs"
+alias cat="bat"
+alias ocat="/bin/cat"
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+# HISTFILE is used by interactive shells only. Plus, 
+# sub shells & external commands don't need this var.
+# Hence, we put it in .zshrc and don't export it.
+HISTFILE=$XDG_STATE_HOME/zsh/history
 
-export PATH="$PATH:/home/casan/.foundry/bin:/home/casan/.cargo/bin"
+# Previously, I would’ve recommended putting the vars 
+# below into `.zprofile`. However, many systems and 
+# terminals _never_ start any Zsh login shells (unless 
+# specifically instructed to do so). So, if you use the
+# same dotfiles with different OSes and terminals, this
+# is not a good idea.
 
-typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
+# Only vars needed by external commands or non-
+# interactive sub shells should be exported. Note that 
+# you can export vars without assigning values to them.
+export XDG_CONFIG_HOME XDG_STATE_HOME
+export XDG_CACHE_HOME=~/.cache
+export XDG_DATA_HOME=~/.local/share
+export EDITOR=nvim VISUAL=nvim
+export BROWSER=firefox
+
+# To customize prompt, run `p10k configure` or edit ~/.config/zsh/.p10k.zsh.
+[[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh

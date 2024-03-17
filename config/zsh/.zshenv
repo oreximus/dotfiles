@@ -1,0 +1,8 @@
+export NB_DIR="$XDG_DATA_HOME/nb"
+export NBRC_PATH="$XDG_CONFIG_HOME/nbrc"
+export CARGO_HOME="$XDG_DATA_HOME/cargo"
+export GDBHISTFILE="$XDG_CONFIG_HOME/gdb/.gdb_history"
+export GNUPGHOME="$XDG_DATA_HOME/gnupg"
+export GOPATH="$XDG_DATA_HOME/go"
+export MPLAYER_HOME="$XDG_CONFIG_HOME/mplayer"
+export PYTHONSTARTUP="$HOME/python/pythonrc"

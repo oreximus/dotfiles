@@ -11,6 +11,9 @@ export PATH=$HOME/.local/bin:/usr/local/bin:$PATH:/home/casan/.local/share/gem/r
 # Path to your oh-my-zsh installation.
 export ZSH="$ZDOTDIR/ohmyzsh"
 
+# Custom Variables
+PROMPT_EOL_MARK=''
+
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
@@ -92,6 +95,11 @@ fcd() {
   dir=$(find . -type d 2> /dev/null | fzf +m) && cd "$dir" && tmux new -s $(basename "$PWD")
 }
 
+glow_open() {
+  local file
+  file=$(find . -type f 2> /dev/null | fzf +m) && glow -p "$file"
+}
+
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
@@ -106,13 +114,14 @@ alias mbsync='mbsync -c "$XDG_CONFIG_HOME"/isync/mbsyncrc'
 alias tmux='tmux -f "$XDG_CONFIG_HOME/tmux/tmux.conf"'
 alias sd=fcd
 alias nb0="nb use Random"
-alias nbl="nb list --sort"
+alias nbl="nb list --filename --sort"
 alias nb1="nb use Notes_Org"
 alias nb2="nb use Learnings"
 alias nb3="nb use Exams\&Academics"
 alias nb4="nb use CTFs"
 alias cat="bat"
 alias ocat="/bin/cat"
+alias og=glow_open
 
 # HISTFILE is used by interactive shells only. Plus, 
 # sub shells & external commands don't need this var.
@@ -137,3 +146,4 @@ export BROWSER=firefox
 
 # To customize prompt, run `p10k configure` or edit ~/.config/zsh/.p10k.zsh.
 [[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh
+ typeset -g POWERLEVEL9K_INSTANT_PROMPT=off

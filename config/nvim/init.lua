@@ -1,1 +1,2 @@
-require("oreximus")
+require("oreximus.core")
+require("oreximus.lazy")

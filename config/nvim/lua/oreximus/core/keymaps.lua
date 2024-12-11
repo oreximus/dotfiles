@@ -17,3 +17,17 @@ keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer
 
 -- for making file executable
 keymap.set("n", "<leader>wx", "<cmd>!chmod +x %<CR>", { desc = "Make file executable" })
+
+-- Stay in indent mode
+keymap.set("v", "<", "<gv", { desc = "" })
+keymap.set("v", ">", ">gv", { desc = "" })
+
+-- Move text up and down
+keymap.set("v", "<A-j>", ":m .+1<CR>==", { desc = "" })
+keymap.set("v", "<A-k>", ":m .-2<CR>==", { desc = "" })
+
+-- Move text up and down
+keymap.set("x", "J", ":move '>+1<CR>gv-gv", { desc = "" })
+keymap.set("x", "K", ":move '<-2<CR>gv-gv", { desc = "" })
+keymap.set("x", "<A-j>", ":move '>+1<CR>gv-gv", { desc = "" })
+keymap.set("x", "<A-k>", ":move '<-2<CR>gv-gv", { desc = "" })
